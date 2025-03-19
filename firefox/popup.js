@@ -30,14 +30,14 @@ async function storeShortcut() {
 }
 document.addEventListener("DOMContentLoaded", () => {
     var shortcutInput = document.getElementById("shortcut-input");
-    retrieveShortcut().then(shortcutItem=>{
-    if (!shortcutItem) {
-        storeShortcut();
-    } else {
-        shortcutKey = shortcutItem[0];
-        shortcutModifiers = shortcutItem[1];
-    }
-    shortcutInput.value = buildKeyName(shortcutKey, shortcutModifiers);
+    retrieveShortcut().then(shortcutItem => {
+        if (!shortcutItem) {
+            storeShortcut();
+        } else {
+            shortcutKey = shortcutItem[0];
+            shortcutModifiers = shortcutItem[1];
+        }
+        shortcutInput.value = buildKeyName(shortcutKey, shortcutModifiers);
     });
     shortcutInput.addEventListener("keydown", (ev) => {
         console.log(ev);
@@ -48,4 +48,28 @@ document.addEventListener("DOMContentLoaded", () => {
         storeShortcut();
         shortcutInput.value = buildKeyName(shortcutKey, shortcutModifiers);
     })
-})
+    browser.tabs.query({
+        active: true,
+        currentWindow: true
+    }).then(
+        (tabs) => {
+            let tab = tabs[0];
+
+            var runningSwitch = document.getElementById("running-switch");
+            browser.tabs.sendMessage(tab.id, {
+                content: "ping"
+            }).then((msg) => {
+                    console.log(msg);
+                    if (msg && msg.content == "pong") {
+                        runningSwitch.checked = true;
+                    } else {
+
+                        runningSwitch.checked = false;
+                    }
+                },
+                () => {
+
+                    runningSwitch.checked = false;
+                })
+        })
+});

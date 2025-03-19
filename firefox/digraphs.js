@@ -163,3 +163,11 @@ fetch(browser.runtime.getURL('data/digs.json'))
         digraphs = data;
     })
     .catch(error => console.error("Error loading digs.json:", error));
+
+browser.runtime.onMessage.addListener((msg, listener, sendResponse) => {
+    if (msg.content == 'ping') {
+        sendResponse({
+            "content": "pong"
+        });
+    }
+});
