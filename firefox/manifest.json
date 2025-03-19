@@ -1,0 +1,20 @@
+{
+    "manifest_version": 2,
+    "name": "Digraphs for Firefox",
+    "version": "1.0",
+    "description": "Vim-style digraphs for Firefox",
+    "content_scripts": [{
+	"matches": ["<all_urls>"],
+        "js": [
+            "digraphs.js"
+        ],
+	"run_at": "document_start"
+    }
+    ],
+    "browser_specific_settings": {
+        "gecko": {
+            "id": "vim.digraphs@jenca.sk"
+        }
+    }
+   
+}
