@@ -1,0 +1,45 @@
+html, #popup{
+	width:300px;
+	height:400px;
+	margin:0;
+	padding:0;
+	font-family:sans-serif;
+}
+#popup-content{
+	overflow-y:scroll;
+}
+.popup-form-item{
+	padding:10px;
+	display:flex;
+	justify-content:space-between;
+}
+.group-end{
+	border-bottom: 1px solid #ccc;
+}
+
+.popup-header{
+	width: 100%;
+	background: #ccc;
+	border-bottom: 1px solid #999;
+	justify-content:center;
+	display:flex;
+	position:sticky;
+	
+}
+.popup-header-inner {
+	display:flex;
+	justify-content:space-between;
+	width:95%;
+	align-items:center;
+	padding:0.5em;
+}
+.popup-header *{
+	margin-top:0;
+	margin-bottom:0;
+}
+.popup-header h3{
+	font-weight: normal;
+}
+.shortcut-input-container, #shortcut-input {
+	width: 125px;
+}

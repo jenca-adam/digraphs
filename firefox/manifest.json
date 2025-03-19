@@ -2,6 +2,7 @@
     "manifest_version": 2,
     "name": "Digraphs for Firefox",
     "version": "1.0",
+    "permissions":["activeTab", "storage"],
     "description": "Vim-style digraphs for Firefox",
     "content_scripts": [{
 	"matches": ["<all_urls>"],
@@ -15,6 +16,11 @@
         "gecko": {
             "id": "vim.digraphs@jenca.sk"
         }
+    },
+    "browser_action": {
+	    "default_icon":"icons/dig-64.png",
+	    "default_title": "Digraphs",
+	    "default_popup": "popup.html"
     }
    
 }

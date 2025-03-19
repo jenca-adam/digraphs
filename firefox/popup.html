@@ -1,0 +1,38 @@
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="popup.css" />
+</head>
+
+<body id="popup">
+    <header class="popup-header">
+        <div class="popup-header-inner">
+            <span><button class="popup-header-digs">D</button></span>
+            <span class="popup-header-title">
+                <h3>Digraphs</h3>
+            </span>
+            <span><button class="popup-header-help">H</button></span>
+        </div>
+    </header>
+    <div id="popup-content">
+        <form class="popup-form">
+            <div class="popup-form-item group-end">
+		<span>Enable for this page</span>
+                <span class="switch">
+                    <input class="switch-box" checked type="checkbox">
+                    <span class="switch-slider"></span>
+                </span>
+            </div>
+	    <div class="popup-form-item">
+		<span>Modify shortcut</span>
+		<span class="shortcut-input-container">
+			<input type="text" id="shortcut-input"></input>
+		</span>
+	    </div>
+        </form>
+    </div>
+    <script src="popup.js"></script>
+</body>
+
+</html>
