@@ -1,0 +1,35 @@
+<html>
+	<head>
+		<title>Default digraphs</title>
+		<meta charset="utf-8"/>
+		<link rel="stylesheet" href="diglist.css"/>
+	</head>
+	<body>
+		<header id="diglist-header">
+		<h1>Default digraphs</h1>
+		<h3><a href="https://vimhelp.org/digraph.txt.html">Pulled directly from Vim's files</a></h3>
+		</header>
+		<div id="table-container">
+		<table id="dig-table">
+			<thead id="dig-table-head">
+				<th scope="col">Primary</th>
+				<th scope="col">Secondary</th>
+				<th scope="col">Character</th>
+				<th scope="col">UTF</th>
+			</thead>
+			<tbody id="dig-table-body">
+				{% for dig in diglist %}
+				<tr>
+				<td>{{dig["primary"] |e}}</td>
+				<td>{{dig["secondary"]|e}}</td>
+				<td>{{dig["char"]|e}}</td>
+				<td>{{dig["utf"]|e}}</td>
+				</tr>
+				{%endfor%}
+			</tbody>
+		</table>
+		</div>
+	</body>
+</html>
+
+

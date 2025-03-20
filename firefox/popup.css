@@ -8,15 +8,33 @@ html, #popup{
 #popup-content{
 	overflow-y:scroll;
 }
+.digraph{
+	width: 2.5em;
+}
+.character{
+	width: 1.5em;
+}
+.fill{
+	width:100%;
+}
+.shrink{
+	width:fit-content;
+}
 .popup-form-item{
 	padding:10px;
 	display:flex;
 	justify-content:space-between;
 }
-.group-end{
+.group-header, .tab-header{
+	background: #eee;
+	font-weight:bold;
+	color: #666;
+}
+.group-header{
+	padding: 5px;
+	border-top: 1px solid #ccc;
 	border-bottom: 1px solid #ccc;
 }
-
 .popup-header{
 	width: 100%;
 	background: #ccc;
@@ -24,6 +42,7 @@ html, #popup{
 	justify-content:center;
 	display:flex;
 	position:sticky;
+	top:0;
 	
 }
 .popup-header-inner {
@@ -42,4 +61,13 @@ html, #popup{
 }
 .shortcut-input-container, #shortcut-input {
 	width: 125px;
+}
+#table-container, #digtab{
+	width:100%;
+}
+#digtab{
+	border: 1px solid #ccc;
+	margin-top: 5px;
+	margin-bottom: 5px;
+	border-collapse:collapse;
 }

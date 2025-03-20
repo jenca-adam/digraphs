@@ -1,0 +1,35 @@
+html, body{
+	font-family: sans-serif;
+	margin:0;
+}
+#diglist-header{
+	border-bottom: 1px solid #000;
+	padding:1em;
+	background: #ddd;
+}
+#dig-table{
+	width: 100%;
+	border-collapse: collapse;
+}
+#table-container{
+	padding-top: 1em;
+	padding-left: 2em;
+	padding-right: 2em;
+	padding-bottom: 1em;
+}
+#dig-table,th,td{
+
+	border: 1px solid #ccc;
+}
+#dig-table-head{
+	background: #ddd;
+}
+th, td{
+	padding: 0.2em;
+}
+tr:nth-child(2n){
+	background:#eee;
+}
+a, a:visited{
+	color: #000;
+}

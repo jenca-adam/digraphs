@@ -1,5 +1,10 @@
 var shortcutKey = "k";
 var shortcutModifiers = [true, false, false]; // ctrl alt shift
+function elFromString(st){
+	const template = document.createElement("template");
+	template.innerHTML = st.trim();
+	return template.content.firstElementChild;
+}
 function buildKeyName(key, modifiers) {
     var keyName = key.charAt(0).toUpperCase() + key.slice(1);
     if (modifiers[2] && key != "Shift") {
@@ -28,48 +33,77 @@ async function storeShortcut() {
         "shortcut": [shortcutKey, shortcutModifiers]
     });
 }
-document.addEventListener("DOMContentLoaded", () => {
-    var shortcutInput = document.getElementById("shortcut-input");
-    retrieveShortcut().then(shortcutItem => {
-        if (!shortcutItem) {
-            storeShortcut();
-        } else {
-            shortcutKey = shortcutItem[0];
-            shortcutModifiers = shortcutItem[1];
-        }
-        shortcutInput.value = buildKeyName(shortcutKey, shortcutModifiers);
-    });
-    shortcutInput.addEventListener("keydown", (ev) => {
-        console.log(ev);
-        ev.preventDefault();
-        ev.stopPropagation();
-        shortcutKey = ev.key;
-        shortcutModifiers = [ev.ctrlKey, ev.altKey, ev.shiftKey];
+var shortcutInput = document.getElementById("shortcut-input");
+var newDig = document.getElementById("new-dig");
+var digTab = document.getElementById("digtab");
+retrieveShortcut().then(shortcutItem => {
+    if (!shortcutItem) {
         storeShortcut();
-        shortcutInput.value = buildKeyName(shortcutKey, shortcutModifiers);
-    })
-    browser.tabs.query({
-        active: true,
-        currentWindow: true
-    }).then(
-        (tabs) => {
-            let tab = tabs[0];
+    } else {
+        shortcutKey = shortcutItem[0];
+        shortcutModifiers = shortcutItem[1];
+    }
+    shortcutInput.value = buildKeyName(shortcutKey, shortcutModifiers);
+});
+shortcutInput.addEventListener("keydown", (ev) => {
+    console.log(ev);
+    ev.preventDefault();
+    ev.stopPropagation();
+    shortcutKey = ev.key;
+    shortcutModifiers = [ev.ctrlKey, ev.altKey, ev.shiftKey];
+    storeShortcut();
+    shortcutInput.value = buildKeyName(shortcutKey, shortcutModifiers);
+})
+newDig.addEventListener("click", (ev) => {
+   if(digTab.children.length==0){
+   	var tabHead = elFromString("<thead class=\"tab-header\"></thead>");
+	tabHead.appendChild(elFromString("<th class=\"fill\">Digraph</th>"));
+	tabHead.appendChild(elFromString("<th class=\"shrink\">Character</th>"));
 
-            var runningSwitch = document.getElementById("running-switch");
-            browser.tabs.sendMessage(tab.id, {
-                content: "ping"
-            }).then((msg) => {
-                    console.log(msg);
-                    if (msg && msg.content == "pong") {
-                        runningSwitch.checked = true;
-                    } else {
+	tabHead.appendChild(elFromString("<th class=\"shrink\">&nbsp;</th>"));
+	digTab.appendChild(tabHead);
+	var tabBody = document.createElement("tbody");
+	digTab.appendChild(tabBody);
+   }
+   var tabBody = digTab.getElementsByTagName("tbody")[0];
+   console.log(tabBody, digTab.children);
+   var tabElement = elFromString("<tr class=\"tab-row\"></tr>");
+   tabElement.appendChild(elFromString("<td class=\"fill\"><input type=\"text\" maxlength=\"2\" class=\"digraph\"></td>"));
+   tabElement.appendChild(elFromString("<td class=\"shrink\"><input type=\"text\" maxlength=\"1\" class=\"character\"></td>"));
+   tabElement.appendChild(elFromString("<td class=\"shrink action\"><button class=\"action-button\">S</button></td>"));
+   tabBody.appendChild(tabElement);
+   ev.preventDefault();
+   ev.stopPropagation();
+});
+document.getElementById("popup-header-digs").addEventListener("click", ()=>{window.open(browser.runtime.getURL("digs.html"), "_blank").focus()});
+document.addEventListener("click", (ev)=>{
+	console.log(ev.target.tagName);
+	if(ev.target.tagName.toLowerCase()=="button"){
+		ev.preventDefault();
+		ev.stopPropagation();
+	}
+});
+browser.tabs.query({
+    active: true,
+    currentWindow: true
+}).then(
+    (tabs) => {
+        let tab = tabs[0];
 
-                        runningSwitch.checked = false;
-                    }
-                },
-                () => {
+        var runningSwitch = document.getElementById("running-switch");
+        browser.tabs.sendMessage(tab.id, {
+            content: "ping"
+        }).then((msg) => {
+                console.log(msg);
+                if (msg && msg.content == "pong") {
+                    runningSwitch.checked = true;
+                } else {
 
                     runningSwitch.checked = false;
-                })
-        })
-});
+                }
+            },
+            () => {
+
+                runningSwitch.checked = false;
+            })
+    })

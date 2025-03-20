@@ -8,27 +8,53 @@
 <body id="popup">
     <header class="popup-header">
         <div class="popup-header-inner">
-            <span><button class="popup-header-digs">D</button></span>
+            <span><button id="popup-header-digs" title="View the default digraphs">D</button></span>
             <span class="popup-header-title">
                 <h3>Digraphs</h3>
             </span>
-            <span><button class="popup-header-help">H</button></span>
+            <span><button id="popup-header-help" title="Help">H</button></span>
         </div>
     </header>
     <div id="popup-content">
         <form class="popup-form">
-            <div class="popup-form-item group-end">
-		<span>Enable for this page</span>
-                <span class="switch">
-                    <input id="running-switch" class="switch-box" checked type="checkbox">
-                    <span class="switch-slider"></span>
-                </span>
+            <div class="popup-form-group">
+                <div class="group-header">
+                    For this page
+                </div>
+                <div class="popup-form-item">
+                    <span>Enable</span>
+                    <span class="switch">
+                        <input id="running-switch" class="switch-box" checked type="checkbox">
+                        <span class="switch-slider"></span>
+                    </span>
+                </div>
+                <div class="popup-form-item">
+                    <span>Display partial digraphs</span>
+                    <span class="switch">
+                        <input id="pd-switch" class="switch-box" checked type="checkbox">
+                        <span class="switch-slider"></span>
+                    </span>
+                </div>
             </div>
-	    <div class="popup-form-item">
-		<span>Modify shortcut</span>
-		<span class="shortcut-input-container">
-			<input type="text" id="shortcut-input"></input>
-		</span>
+            <div class="popup-form-group">
+                <div class="group-header">Global</div>
+
+                <div class="popup-form-item">
+                    <span>Modify shortcut</span>
+                    <span class="shortcut-input-container">
+                        <input type="text" id="shortcut-input"></input>
+                    </span>
+                </div>
+            </div>
+	    <div class="popup-form-group">
+		    <div class="group-header">Custom digraphs</div>
+		    <div class="popup-form-item">
+			    <div id="table-container">
+			    <table id="digtab">
+			    </table>
+			    <button id="new-dig">Add</button>
+			    </div>
+		    </div>
 	    </div>
         </form>
     </div>
