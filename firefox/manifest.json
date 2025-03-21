@@ -1,26 +1,36 @@
 {
-    "manifest_version": 2,
-    "name": "Digraphs for Firefox",
-    "version": "1.0",
-    "permissions":["activeTab", "storage"],
-    "description": "Vim-style digraphs for Firefox",
-    "content_scripts": [{
-	"matches": ["<all_urls>"],
-        "js": [
-            "digraphs.js"
-        ],
-	"run_at": "document_start"
+  "background" : {
+    "scripts" : [
+      "background.js"
+    ]
+  },
+  "browser_action" : {
+    "default_icon" : "icons/dig-64.png",
+    "default_popup" : "popup.html",
+    "default_title" : "Digraphs"
+  },
+  "browser_specific_settings" : {
+    "gecko" : {
+      "id" : "vim.digraphs@jenca.sk"
     }
-    ],
-    "browser_specific_settings": {
-        "gecko": {
-            "id": "vim.digraphs@jenca.sk"
-        }
-    },
-    "browser_action": {
-	    "default_icon":"icons/dig-64.png",
-	    "default_title": "Digraphs",
-	    "default_popup": "popup.html"
+  },
+  "content_scripts" : [
+    {
+      "js" : [
+        "digraphs.js"
+      ],
+      "matches" : [
+        "<all_urls>"
+      ],
+      "run_at" : "document_start"
     }
-   
+  ],
+  "description" : "Vim-style digraphs for Firefox",
+  "manifest_version" : 2,
+  "name" : "Digraphs for Firefox",
+  "permissions" : [
+    "activeTab",
+    "storage"
+  ],
+  "version" : "1.0"
 }

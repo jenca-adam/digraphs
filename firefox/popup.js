@@ -34,97 +34,53 @@ async function storeShortcut() {
     await browser.storage.local.set({
         "shortcut": [shortcutKey, shortcutModifiers]
     });
+    await browser.runtime.sendMessage({content: "update"});
 }
-
-function killCs() {
+function dispatch(msg){
     var ret;
-    browser.tabs.sendMessage(tab.id, {
-        content: "die"
+    browser.runtime.sendMessage( {
+        content: msg,
+	tabId: tab.id
     }).then((msg) => {
-            if (msg && msg.content == "dead") {
-                ret = true;
-            }
-            ret = false;
-        },
-        () => {
-            ret = true;
-        }
+    	ret = msg && msg.ok;    
+    }
     )
     return ret;
+
+}
+function killCs() {
+    dispatch("die");
 }
 
 function resurrectCs() {
-    var ret;
-    browser.tabs.sendMessage(tab.id, {
-        content: "resurrect"
-    }).then((msg) => {
-            if (msg && msg.content == "alive") {
-                ret = true;
-            }
-            ret = false;
-        },
-        () => {
-            ret = true;
-        }
-    )
-    return ret;
+    dispatch("resurrect");
 }
 
 function showPd() {
-    var ret;
-    browser.tabs.sendMessage(tab.id, {
-        content: "showp"
-    }).then((msg) => {
-            if (msg && msg.content == "ok") {
-                ret = true;
-            }
-            ret = false;
-        },
-        () => {
-            ret = true;
-        }
-    )
-    return ret;
+    dispatch("showp");
 }
 
 
 function hidePd() {
-    var ret;
-    browser.tabs.sendMessage(tab.id, {
-        content: "hidep"
-    }).then((msg) => {
-            if (msg && msg.content == "ok") {
-                ret = true;
-            }
-            ret = false;
-        },
-        () => {
-            ret = true;
-        }
-    )
-    return ret;
+    dispatch("hidep");
+}   
+function passShortcut(){
+   var ret;
+   
 }
-
 var shortcutInput = document.getElementById("shortcut-input");
 var newDig = document.getElementById("new-dig");
 var digTab = document.getElementById("digtab");
 var runningSwitch = document.getElementById("running-switch");
 var pdSwitch = document.getElementById("pd-switch");
 
-retrieveShortcut().then(shortcutItem => {
-    if (!shortcutItem) {
-        storeShortcut();
-    } else {
-        shortcutKey = shortcutItem[0];
-        shortcutModifiers = shortcutItem[1];
-    }
-    shortcutInput.value = buildKeyName(shortcutKey, shortcutModifiers);
-});
+
 shortcutInput.addEventListener("keydown", (ev) => {
     console.log(ev);
     ev.preventDefault();
     ev.stopPropagation();
-    shortcutKey = ev.key;
+    shortcutKey = ev.key.toLowerCase();
+
     shortcutModifiers = [ev.ctrlKey, ev.altKey, ev.shiftKey];
     storeShortcut();
     shortcutInput.value = buildKeyName(shortcutKey, shortcutModifiers);
@@ -226,7 +182,7 @@ browser.tabs.query({
 }).then(
     (tabs) => {
         tab = tabs[0];
-
+	
         browser.tabs.sendMessage(tab.id, {
             content: "ping"
         }).then((msg) => {
@@ -250,10 +206,8 @@ browser.tabs.query({
                 var url = new URL(tab.url);
                 console.log(url.host);
                 if (disabled.includes(url.host)) {
-                    console.log("DIS");
-		   killCs();
                     runningSwitch.checked = false;
-                } else {
+                } else if (!runningSwitch.disabled){
                     runningSwitch.checked = true;
                 }
             }
@@ -268,11 +222,19 @@ browser.tabs.query({
                 var url = new URL(tab.url);
                 if (noprompt.includes(url.host)) {
                     pdSwitch.checked = false;
-		    hidePd();
                 } else {
                     pdSwitch.checked = true;
                 }
             }
         })
+	retrieveShortcut().then(shortcutItem => {
+	    if (!shortcutItem) {
+		storeShortcut();
+	    } else {
+		shortcutKey = shortcutItem[0];
+		shortcutModifiers = shortcutItem[1];
+	    }
+	    shortcutInput.value = buildKeyName(shortcutKey, shortcutModifiers);
+	});
 
     })

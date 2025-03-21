@@ -1,5 +1,5 @@
 # taken directly from vim
-	{'N', 'U', 0x0a},	
+	{'N', 'U', 0x00},	
 	{'S', 'H', 0x01},
 	{'S', 'X', 0x02},
 	{'E', 'X', 0x03},

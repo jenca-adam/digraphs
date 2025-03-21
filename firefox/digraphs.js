@@ -3,6 +3,8 @@ const cancelKeys = [27, 13, 8]; // esc, enter, backspace
 var digraphBuffer = "";
 var showPartial=true;
 var disabled=false;
+var shortcutKey="k";
+var shortcutModifers=[true, false, false];
 var activeElement;
 var posCache;
 var curselCache;
@@ -15,7 +17,9 @@ function isEditable(el) {
     var name = el.nodeName.toLowerCase();
     return document.designMode == "on" || (el.nodeType == 1 && (el.isContentEditable || name == "textarea" || (name == "input" && RegExp("^(?:text|email|number|search|tel|url|password)$").test(el.type))));
 }
-
+function matchEvent(ev) {
+	return ((ev.key.toLowerCase()==shortcutKey)&&(ev.ctrlKey==shortcutModifiers[0])&&(ev.altKey==shortcutModifiers[1])&&(ev.shiftKey==shortcutModifiers[2]));
+}
 function setCursor(el, cursel, p) {
     if (el.isContentEditable) {
         var range = document.createRange();
@@ -89,10 +93,26 @@ function digraphGet() {
     }
 
 };
-
+function pokeBoss(){
+browser.runtime.sendMessage({"content":"poke"}).then((msg)=>{
+	console.log(msg);
+	if(msg.shortcutKey){
+		shortcutKey = msg.shortcutKey;
+	}
+	if(msg.shortcutModifiers){
+		shortcutModifiers = msg.shortcutModifiers;
+	}
+	if(msg.disabled){
+		disabled = msg.disabled;
+	}
+	if(msg.showp){
+		showPartial = msg.showp;
+	}
+})
+}
 document.addEventListener("keydown", (ev) => {
     console.log(disabled);
-    if (ev.ctrlKey && ev.key == "k") {
+    if (matchEvent(ev)) {
         if (activeElement) {
 
             digraphCancel();
@@ -167,7 +187,7 @@ fetch(browser.runtime.getURL('data/digs.json'))
     })
     .catch(error => console.error("Error loading digs.json:", error));
 
-browser.runtime.onMessage.addListener((msg, listener, sendResponse) => {
+browser.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     if (msg.content == 'ping') {
         sendResponse({
             "content": "pong"
@@ -187,14 +207,20 @@ browser.runtime.onMessage.addListener((msg, listener, sendResponse) => {
     }
     if (msg.content == 'hidep'){
 	showPartial=false;
+	console.log("hide");
 	sendResponse({
 		"content":"ok"
 	})
     }
     if (msg.content == 'showp'){
     	showPartial=true;
+	console.log("show");
 	sendResponse({
 		"content":"ok"
 	})
     }
+    if (msg.content == "pokeBoss"){
+    	pokeBoss();
+    }
 });
+pokeBoss();
