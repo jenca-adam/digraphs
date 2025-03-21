@@ -1,8 +1,9 @@
 const blockKeys = [35, 36, 37, 38, 39, 40];
 const cancelKeys = [27, 13, 8]; // esc, enter, backspace
 var digraphBuffer = "";
-var activeElement;
+var showPartial=true;
 var disabled=false;
+var activeElement;
 var posCache;
 var curselCache;
 var digraphs;
@@ -67,10 +68,10 @@ function cutValue(n) {
 }
 
 function digraphCancel() {
-    if (activeElement) {
+    if (activeElement&&showPartial) {
         cutValue(1 + !!digraphBuffer);
-        activeElement = null;
     }
+    activeElement = null;
     digraphBuffer = "";
 }
 
@@ -106,7 +107,9 @@ document.addEventListener("keydown", (ev) => {
                 ev.preventDefault();
                 ev.stopPropagation();
                 activeElement = el;
-                appendValue("?");
+		if(showPartial){
+                	appendValue("?");
+		}
             }
         }
     } else if (activeElement && !ev.altKey && !ev.ctrlKey && !ev.metaKey && ev.key.length == 1) { //no modifiers + printable
@@ -122,7 +125,7 @@ document.addEventListener("keydown", (ev) => {
                 appendValue(dig)
             });
 
-        } else {
+        } else if (showPartial){
 
             appendValue(ev.key);
         }
@@ -181,5 +184,17 @@ browser.runtime.onMessage.addListener((msg, listener, sendResponse) => {
 	sendResponse({
 		"content":"alive"
 	});
+    }
+    if (msg.content == 'hidep'){
+	showPartial=false;
+	sendResponse({
+		"content":"ok"
+	})
+    }
+    if (msg.content == 'showp'){
+    	showPartial=true;
+	sendResponse({
+		"content":"ok"
+	})
     }
 });

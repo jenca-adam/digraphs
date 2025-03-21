@@ -69,10 +69,48 @@ function resurrectCs() {
     )
     return ret;
 }
+
+function showPd() {
+    var ret;
+    browser.tabs.sendMessage(tab.id, {
+        content: "showp"
+    }).then((msg) => {
+            if (msg && msg.content == "ok") {
+                ret = true;
+            }
+            ret = false;
+        },
+        () => {
+            ret = true;
+        }
+    )
+    return ret;
+}
+
+
+function hidePd() {
+    var ret;
+    browser.tabs.sendMessage(tab.id, {
+        content: "hidep"
+    }).then((msg) => {
+            if (msg && msg.content == "ok") {
+                ret = true;
+            }
+            ret = false;
+        },
+        () => {
+            ret = true;
+        }
+    )
+    return ret;
+}
+
 var shortcutInput = document.getElementById("shortcut-input");
 var newDig = document.getElementById("new-dig");
 var digTab = document.getElementById("digtab");
 var runningSwitch = document.getElementById("running-switch");
+var pdSwitch = document.getElementById("pd-switch");
+
 retrieveShortcut().then(shortcutItem => {
     if (!shortcutItem) {
         storeShortcut();
@@ -142,6 +180,36 @@ runningSwitch.addEventListener("click", (ev) => {
         resurrectCs();
     }
 });
+pdSwitch.addEventListener("click", (ev) => {
+    if (!pdSwitch.checked) {
+        hidePd();
+        browser.storage.local.get("noprompt").then((it) => {
+
+            var noprompt = it["noprompt"] || [];
+            var url = new URL(tab.url);
+            if (!noprompt.includes(url.host)) {
+                noprompt.push(url.host);
+            }
+            browser.storage.local.set({
+                noprompt: noprompt
+            });
+        })
+
+    } else {
+        browser.storage.local.get("noprompt").then((it) => {
+
+            var noprompt = it["noprompt"] || [];
+
+            var url = new URL(tab.url);
+            noprompt = noprompt.filter((it) => it != url.host);
+
+            browser.storage.local.set({
+                noprompt: noprompt
+            });
+        });
+        showPd();
+    }
+});
 document.getElementById("popup-header-digs").addEventListener("click", () => {
     window.open(browser.runtime.getURL("digs.html"), "_blank").focus()
 });
@@ -171,10 +239,9 @@ browser.tabs.query({
             () => {
                 runningSwitch.disabled = true;
                 runningSwitch.checked = false;
-            })
+            });
         browser.storage.local.get("disabled").then((it) => {
             var disabled = it["disabled"]
-            console.log(disabled)
             if (!disabled) {
                 browser.storage.local.set({
                     disabled: []
@@ -184,10 +251,28 @@ browser.tabs.query({
                 console.log(url.host);
                 if (disabled.includes(url.host)) {
                     console.log("DIS");
+		   killCs();
                     runningSwitch.checked = false;
                 } else {
                     runningSwitch.checked = true;
                 }
             }
+        });
+        browser.storage.local.get("noprompt").then((it) => {
+            var noprompt = it["noprompt"]
+            if (!noprompt) {
+                browser.storage.local.set({
+                    noprompt: []
+                });
+            } else {
+                var url = new URL(tab.url);
+                if (noprompt.includes(url.host)) {
+                    pdSwitch.checked = false;
+		    hidePd();
+                } else {
+                    pdSwitch.checked = true;
+                }
+            }
         })
+
     })
