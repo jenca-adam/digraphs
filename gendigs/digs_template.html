@@ -19,9 +19,13 @@
 			</thead>
 			<tbody id="dig-table-body">
 				{% for dig in diglist %}
-				<tr>
+				<tr id="dig-{{loop.index}}">
 				<td>{{dig["primary"] |e}}</td>
+				{% if dig["secondary-taken"] %}
+				<td><a href="#dig-{{dig["secondary-taken"]}}">taken</a></td>
+				{%else%}
 				<td>{{dig["secondary"]|e}}</td>
+				{%endif%}
 				<td>{{dig["char"]|e}}</td>
 				<td>{{dig["utf"]|e}}</td>
 				</tr>

@@ -2,10 +2,10 @@ const blockKeys = [35, 36, 37, 38, 39, 40];
 const cancelKeys = [27, 13, 8]; // esc, enter, backspace
 var digraphBuffer = "";
 var activeElement;
+var disabled=false;
 var posCache;
 var curselCache;
 var digraphs;
-
 function stringReverse(st) {
     return [...st].reverse().join("");
 }
@@ -90,14 +90,14 @@ function digraphGet() {
 };
 
 document.addEventListener("keydown", (ev) => {
-
+    console.log(disabled);
     if (ev.ctrlKey && ev.key == "k") {
         if (activeElement) {
 
             digraphCancel();
             ev.preventDefault();
             ev.stopPropagation();
-        } else {
+        } else if(!disabled){
 
 
             var el = ev.originalTarget;
@@ -169,5 +169,17 @@ browser.runtime.onMessage.addListener((msg, listener, sendResponse) => {
         sendResponse({
             "content": "pong"
         });
+    }
+    if (msg.content == 'die'){
+    	disabled=true;
+	sendResponse({
+		"content":"dead"
+	});
+    }
+    if (msg.content == 'resurrect'){
+    	disabled=false;
+	sendResponse({
+		"content":"alive"
+	});
     }
 });
