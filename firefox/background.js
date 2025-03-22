@@ -138,7 +138,7 @@ browser.runtime.onMessage.addListener((msg, sender, sendResponse) => {
             tabs.forEach(tab => {
                 browser.tabs.sendMessage(tab.id, {
                     content: "pokeBoss"
-                }).then(()=>{},()=>{}); // catch errors
+                }).then(() => {}, () => {}); // catch errors
             })
         })
     } else {

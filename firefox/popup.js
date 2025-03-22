@@ -4,9 +4,11 @@ var customTabEditted = false;
 var shortcutKey = "k";
 var shortcutModifiers = [true, false, false]; // ctrl alt shift
 var digError = document.getElementById("dig-error");
+
 function stringReverse(st) {
     return [...st].reverse().join("");
 }
+
 function elFromString(st) {
     const template = document.createElement("template");
     template.innerHTML = st.trim();
@@ -40,20 +42,23 @@ async function storeShortcut() {
     await browser.storage.local.set({
         "shortcut": [shortcutKey, shortcutModifiers]
     });
-    await browser.runtime.sendMessage({content: "update"});
+    await browser.runtime.sendMessage({
+        content: "update"
+    });
 }
-function dispatch(msg){
+
+function dispatch(msg) {
     var ret;
-    browser.runtime.sendMessage( {
+    browser.runtime.sendMessage({
         content: msg,
-	tabId: tab.id
+        tabId: tab.id
     }).then((msg) => {
-    	ret = msg && msg.ok;    
-    }
-    )
+        ret = msg && msg.ok;
+    })
     return ret;
 
 }
+
 function killCs() {
     dispatch("die");
 }
@@ -69,25 +74,29 @@ function showPd() {
 
 function hidePd() {
     dispatch("hidep");
-}   
-function passShortcut(){
-   var ret;
-   
 }
-function showDigError(error){
-   digError.classList.remove("warn");
-   digError.classList.add("err");
-   digError.hidden = false;
-   digError.innerText = error;
+
+function passShortcut() {
+    var ret;
+
 }
-function showDigWarn(error){
-   digError.classList.remove("err");
-   digError.classList.add("warn");
-   digError.hidden = false;
-   digError.innerText = error;
+
+function showDigError(error) {
+    digError.classList.remove("warn");
+    digError.classList.add("err");
+    digError.hidden = false;
+    digError.innerText = error;
 }
-function clearDigErr(){
-   digError.hidden=true;
+
+function showDigWarn(error) {
+    digError.classList.remove("err");
+    digError.classList.add("warn");
+    digError.hidden = false;
+    digError.innerText = error;
+}
+
+function clearDigErr() {
+    digError.hidden = true;
 }
 var shortcutInput = document.getElementById("shortcut-input");
 var newDig = document.getElementById("new-dig");
@@ -107,34 +116,33 @@ shortcutInput.addEventListener("keydown", (ev) => {
     shortcutInput.value = buildKeyName(shortcutKey, shortcutModifiers);
 })
 newDig.addEventListener("click", (ev) => {
-    if(!customTabEditted){
-    if (digTab.children.length == 0) {
-        var tabHead = elFromString("<thead class=\"tab-header\"></thead>");
-        tabHead.appendChild(elFromString("<th class=\"fill\">Digraph</th>"));
-        tabHead.appendChild(elFromString("<th class=\"shrink\">Character</th>"));
+    if (!customTabEditted) {
+        if (digTab.children.length == 0) {
+            var tabHead = elFromString("<thead class=\"tab-header\"></thead>");
+            tabHead.appendChild(elFromString("<th class=\"fill\">Digraph</th>"));
+            tabHead.appendChild(elFromString("<th class=\"shrink\">Character</th>"));
 
-        tabHead.appendChild(elFromString("<th class=\"shrink\">&nbsp;</th>"));
-        digTab.appendChild(tabHead);
-        var tabBody = document.createElement("tbody");
-        digTab.appendChild(tabBody);
-    }
-    var tabBody = digTab.getElementsByTagName("tbody")[0];
-    console.log(tabBody, digTab.children);
-    var tabElement = elFromString("<tr class=\"tab-row\"></tr>");
-    tabElement.appendChild(elFromString("<td class=\"fill\"><input type=\"text\" maxlength=\"2\" class=\"digraph\"></td>"));
-    tabElement.appendChild(elFromString("<td class=\"shrink\"><input type=\"text\" maxlength=\"1\" class=\"character\"></td>"));
-    tabElement.appendChild(elFromString("<td class=\"shrink action\"><button class=\"action-button\" disabled>S</button></td>"));
-    tabBody.appendChild(tabElement);
-    newDig.innerText="Cancel";
-    customTabEditted=true;
-    }
-    else{
-    	var tabBody = digTab.getElementsByTagName("tbody")[0];
-	if(tabBody&&tabBody.children.length>0){
-		tabBody.removeChild(tabBody.children[tabBody.children.length-1]);
-	}
-	newDig.innerText="Add";
-	customTabEditted=false;
+            tabHead.appendChild(elFromString("<th class=\"shrink\">&nbsp;</th>"));
+            digTab.appendChild(tabHead);
+            var tabBody = document.createElement("tbody");
+            digTab.appendChild(tabBody);
+        }
+        var tabBody = digTab.getElementsByTagName("tbody")[0];
+        console.log(tabBody, digTab.children);
+        var tabElement = elFromString("<tr class=\"tab-row\"></tr>");
+        tabElement.appendChild(elFromString("<td class=\"fill\"><input type=\"text\" maxlength=\"2\" class=\"digraph\"></td>"));
+        tabElement.appendChild(elFromString("<td class=\"shrink\"><input type=\"text\" maxlength=\"1\" class=\"character\"></td>"));
+        tabElement.appendChild(elFromString("<td class=\"shrink action\"><button class=\"action-button\" disabled>S</button></td>"));
+        tabBody.appendChild(tabElement);
+        newDig.innerText = "Cancel";
+        customTabEditted = true;
+    } else {
+        var tabBody = digTab.getElementsByTagName("tbody")[0];
+        if (tabBody && tabBody.children.length > 0) {
+            tabBody.removeChild(tabBody.children[tabBody.children.length - 1]);
+        }
+        newDig.innerText = "Add";
+        customTabEditted = false;
     }
     ev.preventDefault();
     ev.stopPropagation();
@@ -211,34 +219,30 @@ document.addEventListener("click", (ev) => {
 });
 
 document.addEventListener("keyup", (ev) => {
-    if (ev.target.classList.contains("digraph")){
-	var saveButton = ev.target.parentElement.parentElement.getElementsByClassName("action-button")[0];
-	var charInput =ev.target.parentElement.parentElement.getElementsByClassName("character")[0];
-	if(charInput.value.length==1){
-		saveButton.disabled=false;
-	}
-    	if(ev.target.value in digraphs){
-		showDigWarn(`Overriding primary digraph  '${ev.target.value}' for '${digraphs[ev.target.value]}'`);
-	}
-  	else if(stringReverse(ev.target.value) in digraphs){
-		var rev = stringReverse(ev.target.value);
-		showDigWarn(`Overriding secondary digraph '${ev.target.value}' for '${digraphs[rev]}'`);
-	}
-	else if(ev.target.value.length!=2){
-		showDigError("Digraph value must be 2 chars long");
-		saveButton.disabled=true;
-	}
-	else{
-		clearDigErr();
-	}
-    }
-    else if(ev.target.classList.contains("character")){
+    if (ev.target.classList.contains("digraph")) {
         var saveButton = ev.target.parentElement.parentElement.getElementsByClassName("action-button")[0];
-	var digInput =ev.target.parentElement.parentElement.getElementsByClassName("digraph")[0];
-	saveButton.disabled=true;
-	if(digInput.value.length==2&&ev.target.value.length==1){
-		saveButton.disabled=false;
-	}
+        var charInput = ev.target.parentElement.parentElement.getElementsByClassName("character")[0];
+        if (charInput.value.length == 1) {
+            saveButton.disabled = false;
+        }
+        if (ev.target.value in digraphs) {
+            showDigWarn(`Overriding primary digraph  '${ev.target.value}' for '${digraphs[ev.target.value]}'`);
+        } else if (stringReverse(ev.target.value) in digraphs) {
+            var rev = stringReverse(ev.target.value);
+            showDigWarn(`Overriding secondary digraph '${ev.target.value}' for '${digraphs[rev]}'`);
+        } else if (ev.target.value.length != 2) {
+            showDigError("Digraph value must be 2 chars long");
+            saveButton.disabled = true;
+        } else {
+            clearDigErr();
+        }
+    } else if (ev.target.classList.contains("character")) {
+        var saveButton = ev.target.parentElement.parentElement.getElementsByClassName("action-button")[0];
+        var digInput = ev.target.parentElement.parentElement.getElementsByClassName("digraph")[0];
+        saveButton.disabled = true;
+        if (digInput.value.length == 2 && ev.target.value.length == 1) {
+            saveButton.disabled = false;
+        }
     }
 
 });
@@ -248,7 +252,7 @@ browser.tabs.query({
 }).then(
     (tabs) => {
         tab = tabs[0];
-	
+
         browser.tabs.sendMessage(tab.id, {
             content: "ping"
         }).then((msg) => {
@@ -273,7 +277,7 @@ browser.tabs.query({
                 console.log(url.host);
                 if (disabled.includes(url.host)) {
                     runningSwitch.checked = false;
-                } else if (!runningSwitch.disabled){
+                } else if (!runningSwitch.disabled) {
                     runningSwitch.checked = true;
                 }
             }
@@ -293,15 +297,15 @@ browser.tabs.query({
                 }
             }
         })
-	retrieveShortcut().then(shortcutItem => {
-	    if (!shortcutItem) {
-		storeShortcut();
-	    } else {
-		shortcutKey = shortcutItem[0];
-		shortcutModifiers = shortcutItem[1];
-	    }
-	    shortcutInput.value = buildKeyName(shortcutKey, shortcutModifiers);
-	});
+        retrieveShortcut().then(shortcutItem => {
+            if (!shortcutItem) {
+                storeShortcut();
+            } else {
+                shortcutKey = shortcutItem[0];
+                shortcutModifiers = shortcutItem[1];
+            }
+            shortcutInput.value = buildKeyName(shortcutKey, shortcutModifiers);
+        });
 
     })
 

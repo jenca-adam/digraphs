@@ -1,14 +1,15 @@
 const blockKeys = [35, 36, 37, 38, 39, 40];
 const cancelKeys = [27, 13, 8]; // esc, enter, backspace
 var digraphBuffer = "";
-var showPartial=true;
-var disabled=false;
-var shortcutKey="k";
-var shortcutModifers=[true, false, false];
+var showPartial = true;
+var disabled = false;
+var shortcutKey = "k";
+var shortcutModifers = [true, false, false];
 var activeElement;
 var posCache;
 var curselCache;
 var digraphs;
+
 function stringReverse(st) {
     return [...st].reverse().join("");
 }
@@ -17,9 +18,11 @@ function isEditable(el) {
     var name = el.nodeName.toLowerCase();
     return document.designMode == "on" || (el.nodeType == 1 && (el.isContentEditable || name == "textarea" || (name == "input" && RegExp("^(?:text|email|number|search|tel|url|password)$").test(el.type))));
 }
+
 function matchEvent(ev) {
-	return ((ev.key.toLowerCase()==shortcutKey)&&(ev.ctrlKey==shortcutModifiers[0])&&(ev.altKey==shortcutModifiers[1])&&(ev.shiftKey==shortcutModifiers[2]));
+    return ((ev.key.toLowerCase() == shortcutKey) && (ev.ctrlKey == shortcutModifiers[0]) && (ev.altKey == shortcutModifiers[1]) && (ev.shiftKey == shortcutModifiers[2]));
 }
+
 function setCursor(el, cursel, p) {
     if (el.isContentEditable) {
         var range = document.createRange();
@@ -72,7 +75,7 @@ function cutValue(n) {
 }
 
 function digraphCancel() {
-    if (activeElement&&showPartial) {
+    if (activeElement && showPartial) {
         cutValue(1 + !!digraphBuffer);
     }
     activeElement = null;
@@ -93,22 +96,25 @@ function digraphGet() {
     }
 
 };
-function pokeBoss(){
-browser.runtime.sendMessage({"content":"poke"}).then((msg)=>{
-	console.log(msg);
-	if(msg.shortcutKey){
-		shortcutKey = msg.shortcutKey;
-	}
-	if(msg.shortcutModifiers){
-		shortcutModifiers = msg.shortcutModifiers;
-	}
-	if(msg.disabled){
-		disabled = msg.disabled;
-	}
-	if(msg.showp){
-		showPartial = msg.showp;
-	}
-})
+
+function pokeBoss() {
+    browser.runtime.sendMessage({
+        "content": "poke"
+    }).then((msg) => {
+        console.log(msg);
+        if (msg.shortcutKey) {
+            shortcutKey = msg.shortcutKey;
+        }
+        if (msg.shortcutModifiers) {
+            shortcutModifiers = msg.shortcutModifiers;
+        }
+        if (msg.disabled) {
+            disabled = msg.disabled;
+        }
+        if (msg.showp) {
+            showPartial = msg.showp;
+        }
+    })
 }
 document.addEventListener("keydown", (ev) => {
     console.log(disabled);
@@ -118,7 +124,7 @@ document.addEventListener("keydown", (ev) => {
             digraphCancel();
             ev.preventDefault();
             ev.stopPropagation();
-        } else if(!disabled){
+        } else if (!disabled) {
 
 
             var el = ev.originalTarget;
@@ -127,9 +133,9 @@ document.addEventListener("keydown", (ev) => {
                 ev.preventDefault();
                 ev.stopPropagation();
                 activeElement = el;
-		if(showPartial){
-                	appendValue("?");
-		}
+                if (showPartial) {
+                    appendValue("?");
+                }
             }
         }
     } else if (activeElement && !ev.altKey && !ev.ctrlKey && !ev.metaKey && ev.key.length == 1) { //no modifiers + printable
@@ -145,7 +151,7 @@ document.addEventListener("keydown", (ev) => {
                 appendValue(dig)
             });
 
-        } else if (showPartial){
+        } else if (showPartial) {
 
             appendValue(ev.key);
         }
@@ -193,34 +199,34 @@ browser.runtime.onMessage.addListener((msg, sender, sendResponse) => {
             "content": "pong"
         });
     }
-    if (msg.content == 'die'){
-    	disabled=true;
-	sendResponse({
-		"content":"dead"
-	});
+    if (msg.content == 'die') {
+        disabled = true;
+        sendResponse({
+            "content": "dead"
+        });
     }
-    if (msg.content == 'resurrect'){
-    	disabled=false;
-	sendResponse({
-		"content":"alive"
-	});
+    if (msg.content == 'resurrect') {
+        disabled = false;
+        sendResponse({
+            "content": "alive"
+        });
     }
-    if (msg.content == 'hidep'){
-	showPartial=false;
-	console.log("hide");
-	sendResponse({
-		"content":"ok"
-	})
+    if (msg.content == 'hidep') {
+        showPartial = false;
+        console.log("hide");
+        sendResponse({
+            "content": "ok"
+        })
     }
-    if (msg.content == 'showp'){
-    	showPartial=true;
-	console.log("show");
-	sendResponse({
-		"content":"ok"
-	})
+    if (msg.content == 'showp') {
+        showPartial = true;
+        console.log("show");
+        sendResponse({
+            "content": "ok"
+        })
     }
-    if (msg.content == "pokeBoss"){
-    	pokeBoss();
+    if (msg.content == "pokeBoss") {
+        pokeBoss();
     }
 });
 pokeBoss();
