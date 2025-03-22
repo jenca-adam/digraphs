@@ -116,3 +116,17 @@ html, #popup{
 .switch-box{
   visibility: hidden;
   }
+.row{
+	display:flex;
+	flex-direction:row;
+}
+#dig-error{
+	margin-left: 1em;
+	font-weight: bold;
+}
+.err{
+	color:#900;
+}
+.warn{
+	color:#990;
+}
