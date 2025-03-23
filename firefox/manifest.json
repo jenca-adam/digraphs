@@ -9,11 +9,6 @@
     "default_popup" : "popup.html",
     "default_title" : "Digraphs"
   },
-  "browser_specific_settings" : {
-    "gecko" : {
-      "id" : "vim.digraphs@jenca.sk"
-    }
-  },
   "content_scripts" : [
     {
       "js" : [

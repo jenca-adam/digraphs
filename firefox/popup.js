@@ -10,11 +10,7 @@ function stringReverse(st) {
     return [...st].reverse().join("");
 }
 
-function elFromString(st) {
-    const template = document.createElement("template");
-    template.innerHTML = st.trim();
-    return template.content.firstElementChild;
-}
+
 
 function buildKeyName(key, modifiers) {
     var keyName = key.charAt(0).toUpperCase() + key.slice(1);
