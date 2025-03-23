@@ -8,11 +8,11 @@
 <body id="popup">
     <header class="popup-header">
         <div class="popup-header-inner">
-            <span><button id="popup-header-digs" title="View the default digraphs">D</button></span>
+            <span><button id="popup-header-digs" title="View the default digraphs"></button></span>
             <span class="popup-header-title">
                 <h3>Digraphs</h3>
             </span>
-            <span><button id="popup-header-help" title="Help">H</button></span>
+            <span><button id="popup-header-help" title="Help"></button></span>
         </div>
     </header>
     <div id="popup-content">
@@ -54,21 +54,21 @@
                             <thead class="tab-header" id="digtab-header" hidden>
                                 <th class="fill">Digraph</th>
                                 <th class="shrink">Character</th>
-                                <th class="shrink">&nbsp;</th>
+                                <th class="shrink icon-th"></th>
                             </thead>
                             <tbody id="digtab-body">
                                 <template id="digtab-row-edit">
                                     <tr class="tab-row">
                                         <td class="fill"><input type="text" maxlength="2" class="digraph"></td>
                                         <td class="shrink"><input type="text" maxlength="1" class="character"></td>
-                                        <td class="shrink action"><button class="action-button save" disabled>S</button></td>
+                                        <td class="shrink action"><button class="action-button save" disabled></button></td>
                                     </tr>
                                 </template>
                                 <template id="digtab-row">
                                     <tr class="tab-row">
                                         <td class="fill"><input type="text" maxlength="2" class="digraph" readonly></td>
                                         <td class="shrink"><input type="text" maxlength="1" class="character" readonly></td>
-                                        <td class="shrink action"><button class="action-button delete" >D</button></td>
+                                        <td class="shrink action"><button class="action-button delete" ></button></td>
                                     </tr>
                                 </template>
                             </tbody>

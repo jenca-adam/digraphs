@@ -231,7 +231,6 @@ document.addEventListener("click", (ev) => {
             var digInput = ev.target.parentElement.parentElement.getElementsByClassName("digraph")[0];
             var charInput = ev.target.parentElement.parentElement.getElementsByClassName("character")[0];
             customDigs[digInput.value] = charInput.value;
-            ev.target.innerText = "D";
             ev.target.classList.remove("save");
             ev.target.classList.add("delete");
             digInput.readOnly = true;
