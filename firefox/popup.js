@@ -126,7 +126,7 @@ var newDig = document.getElementById("new-dig");
 var digTab = document.getElementById("digtab");
 var runningSwitch = document.getElementById("running-switch");
 var pdSwitch = document.getElementById("pd-switch");
-
+var popupContent = document.getElementById("popup");
 
 shortcutInput.addEventListener("keydown", (ev) => {
     console.log(ev);
@@ -148,6 +148,8 @@ newDig.addEventListener("click", (ev) => {
         tabBody.appendChild(tabRowElement);
         newDig.innerText = "Cancel";
         customTabEditted = true;
+        console.log(popupContent.scrollHeight);
+    	setTimeout(()=>{popupContent.scrollTo(0,popupContent.scrollHeight)});
     } else {
         var tabBody = digTab.getElementsByTagName("tbody")[0];
         if (tabBody && tabBody.children.length > 0) {

@@ -1,14 +1,10 @@
 html,
 #popup {
     width: 300px;
-    height: 400px;
-    max-height: 400px;
+    max-height: 350px;
     margin: 0;
     padding: 0;
     font-family: sans-serif;
-}
-
-#popup-content {
     overflow-y: scroll;
 }
 

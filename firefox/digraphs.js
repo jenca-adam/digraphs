@@ -84,7 +84,6 @@ function digraphCancel() {
 }
 
 function digraphGet() {
-    console.log(custom);
     var rev = stringReverse(digraphBuffer);
     if (!digraphBuffer) {
         return "";
@@ -92,8 +91,6 @@ function digraphGet() {
         return custom[digraphBuffer];
     } else if (digraphs && digraphBuffer in digraphs) {
         return digraphs[digraphBuffer];
-    } else if (custom && rev in custom) {
-        return custom[rev];
     } else if (digraphs && rev in digraphs) {
         return digraphs[rev];
     } else {
@@ -106,7 +103,6 @@ function pokeBoss() {
     browser.runtime.sendMessage({
         "content": "poke"
     }).then((msg) => {
-        console.log(msg);
         if (msg.shortcutKey) {
             shortcutKey = msg.shortcutKey;
         }
@@ -125,7 +121,6 @@ function pokeBoss() {
     })
 }
 document.addEventListener("keydown", (ev) => {
-    console.log(disabled);
     if (matchEvent(ev)) {
         if (activeElement) {
 
@@ -221,14 +216,12 @@ browser.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     }
     if (msg.content == 'hidep') {
         showPartial = false;
-        console.log("hide");
         sendResponse({
             "content": "ok"
         })
     }
     if (msg.content == 'showp') {
         showPartial = true;
-        console.log("show");
         sendResponse({
             "content": "ok"
         })
