@@ -4,7 +4,7 @@ var digraphBuffer = "";
 var showPartial = true;
 var disabled = false;
 var shortcutKey = "k";
-var shortcutModifers = [true, false, false];
+var shortcutModifiers = [true, false, false];
 var activeElement;
 var posCache;
 var curselCache;
