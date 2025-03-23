@@ -103,34 +103,39 @@ browser.runtime.onMessage.addListener((msg, sender, sendResponse) => {
         var disabled;
         var showp;
         var host;
+        var custom;
         if (sender.url) {
             host = new URL(sender.url).host;
         } else {
             host = "";
         }
-        browser.storage.local.get("shortcut", (it) => {
-            var shortcutItem = it["shortcut"];
-            if (shortcutItem) {
-                shortcutKey = shortcutItem[0];
-                shortcutModifiers = shortcutItem[1];
-            }
-            browser.storage.local.get("disabled", (it) => {
-                var disabledItem = it["disabled"];
-                disabled = disabledItem && disabledItem.includes(host);
-                browser.storage.local.get("noprompt", (it) => {
+        browser.storage.local.get("custom", (it) => {
+            custom = it["custom"];
+            browser.storage.local.get("shortcut", (it) => {
+                var shortcutItem = it["shortcut"];
+                if (shortcutItem) {
+                    shortcutKey = shortcutItem[0];
+                    shortcutModifiers = shortcutItem[1];
+                }
+                browser.storage.local.get("disabled", (it) => {
+                    var disabledItem = it["disabled"];
+                    disabled = disabledItem && disabledItem.includes(host);
+                    browser.storage.local.get("noprompt", (it) => {
 
-                    var nopromptItem = it["noprompt"];
+                        var nopromptItem = it["noprompt"];
 
-                    showp = !(nopromptItem && nopromptItem.includes(host));
-                    sendResponse({
-                        shortcutKey: shortcutKey,
-                        shortcutModifiers: shortcutModifiers,
-                        disabled: disabled,
-                        showp: showp
-                    });
+                        showp = !(nopromptItem && nopromptItem.includes(host));
+                        sendResponse({
+                            shortcutKey: shortcutKey,
+                            shortcutModifiers: shortcutModifiers,
+                            disabled: disabled,
+                            showp: showp,
+                            custom: custom
+                        });
+                    })
                 })
-            })
 
+            })
         })
 
     } else if (msg.content == "update") {

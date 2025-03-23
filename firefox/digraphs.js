@@ -9,6 +9,7 @@ var activeElement;
 var posCache;
 var curselCache;
 var digraphs;
+var custom;
 
 function stringReverse(st) {
     return [...st].reverse().join("");
@@ -83,14 +84,18 @@ function digraphCancel() {
 }
 
 function digraphGet() {
+    console.log(custom);
+    var rev = stringReverse(digraphBuffer);
     if (!digraphBuffer) {
         return "";
-    } else if (!digraphs) {
-        return digraphBuffer.at(-1);
-    } else if (digraphBuffer in digraphs) {
+    } else if (custom && digraphBuffer in custom) {
+        return custom[digraphBuffer];
+    } else if (digraphs && digraphBuffer in digraphs) {
         return digraphs[digraphBuffer];
-    } else if (stringReverse(digraphBuffer) in digraphs) {
-        return digraphs[stringReverse(digraphBuffer)];
+    } else if (custom && rev in custom) {
+        return custom[rev];
+    } else if (digraphs && rev in digraphs) {
+        return digraphs[rev];
     } else {
         return digraphBuffer.at(-1);
     }
@@ -113,6 +118,9 @@ function pokeBoss() {
         }
         if (msg.showp) {
             showPartial = msg.showp;
+        }
+        if (msg.custom) {
+            custom = msg.custom;
         }
     })
 }

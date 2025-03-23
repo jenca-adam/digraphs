@@ -46,19 +46,41 @@
                     </span>
                 </div>
             </div>
-	    <div class="popup-form-group">
-		    <div class="group-header">Custom digraphs</div>
-		    <div class="popup-form-item">
-			    <div id="table-container">
-			    <table id="digtab">
-			    </table>
-			    <div class="row">
-			    <button id="new-dig">Add</button>
-			    <span id="dig-error"></span>
-			    </div>
-			    </div>
-		    </div>
-	    </div>
+            <div class="popup-form-group">
+                <div class="group-header">Custom digraphs</div>
+                <div class="popup-form-item">
+                    <div id="table-container">
+                        <table id="digtab">
+                            <thead class="tab-header" id="digtab-header" hidden>
+                                <th class="fill">Digraph</th>
+                                <th class="shrink">Character</th>
+                                <th class="shrink">&nbsp;</th>
+                            </thead>
+                            <tbody id="digtab-body">
+                                <template id="digtab-row-edit">
+                                    <tr class="tab-row">
+                                        <td class="fill"><input type="text" maxlength="2" class="digraph"></td>
+                                        <td class="shrink"><input type="text" maxlength="1" class="character"></td>
+                                        <td class="shrink action"><button class="action-button save" disabled>S</button></td>
+                                    </tr>
+                                </template>
+                                <template id="digtab-row">
+                                    <tr class="tab-row">
+                                        <td class="fill"><input type="text" maxlength="2" class="digraph" readonly></td>
+                                        <td class="shrink"><input type="text" maxlength="1" class="character" readonly></td>
+                                        <td class="shrink action"><button class="action-button delete" >D</button></td>
+                                    </tr>
+                                </template>
+                            </tbody>
+
+                        </table>
+                        <div class="row">
+                            <button id="new-dig">Add</button>
+                            <span id="dig-error"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </form>
     </div>
     <script src="popup.js"></script>

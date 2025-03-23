@@ -1,5 +1,6 @@
 var tab;
 var digraphs;
+var customDigs = {};
 var customTabEditted = false;
 var shortcutKey = "k";
 var shortcutModifiers = [true, false, false]; // ctrl alt shift
@@ -32,8 +33,7 @@ async function retrieveShortcut() {
     var storageItem = await browser.storage.local.get("shortcut");
     console.log(storageItem);
     if (!storageItem || !("shortcut" in storageItem)) {
-        console.error("nothing in storage");
-        return null;
+        return;
     }
     var shortcutItem = storageItem["shortcut"];
     return shortcutItem;
@@ -41,6 +41,21 @@ async function retrieveShortcut() {
 async function storeShortcut() {
     await browser.storage.local.set({
         "shortcut": [shortcutKey, shortcutModifiers]
+    });
+    await browser.runtime.sendMessage({
+        content: "update"
+    });
+}
+async function retrieveCustom() {
+    var storageItem = await browser.storage.local.get("custom");
+    if (!storageItem || !("custom" in storageItem)) {
+        return;
+    }
+    return storageItem["custom"];
+}
+async function storeCustom() {
+    await browser.storage.local.set({
+        "custom": customDigs
     });
     await browser.runtime.sendMessage({
         content: "update"
@@ -98,6 +113,14 @@ function showDigWarn(error) {
 function clearDigErr() {
     digError.hidden = true;
 }
+
+function showDigTabHead() {
+    document.getElementById("digtab-header").hidden = false;
+}
+
+function hideDigTabHead() {
+    document.getElementById("digtab-header").hidden = true;
+}
 var shortcutInput = document.getElementById("shortcut-input");
 var newDig = document.getElementById("new-dig");
 var digTab = document.getElementById("digtab");
@@ -117,23 +140,12 @@ shortcutInput.addEventListener("keydown", (ev) => {
 })
 newDig.addEventListener("click", (ev) => {
     if (!customTabEditted) {
-        if (digTab.children.length == 0) {
-            var tabHead = elFromString("<thead class=\"tab-header\"></thead>");
-            tabHead.appendChild(elFromString("<th class=\"fill\">Digraph</th>"));
-            tabHead.appendChild(elFromString("<th class=\"shrink\">Character</th>"));
-
-            tabHead.appendChild(elFromString("<th class=\"shrink\">&nbsp;</th>"));
-            digTab.appendChild(tabHead);
-            var tabBody = document.createElement("tbody");
-            digTab.appendChild(tabBody);
-        }
-        var tabBody = digTab.getElementsByTagName("tbody")[0];
+        showDigTabHead();
+        var tabBody = document.getElementById("digtab-body");
         console.log(tabBody, digTab.children);
-        var tabElement = elFromString("<tr class=\"tab-row\"></tr>");
-        tabElement.appendChild(elFromString("<td class=\"fill\"><input type=\"text\" maxlength=\"2\" class=\"digraph\"></td>"));
-        tabElement.appendChild(elFromString("<td class=\"shrink\"><input type=\"text\" maxlength=\"1\" class=\"character\"></td>"));
-        tabElement.appendChild(elFromString("<td class=\"shrink action\"><button class=\"action-button\" disabled>S</button></td>"));
-        tabBody.appendChild(tabElement);
+        var tabRowTemplate = document.getElementById("digtab-row-edit");
+        var tabRowElement = tabRowTemplate.content.cloneNode(true);
+        tabBody.appendChild(tabRowElement);
         newDig.innerText = "Cancel";
         customTabEditted = true;
     } else {
@@ -210,41 +222,78 @@ pdSwitch.addEventListener("click", (ev) => {
 document.getElementById("popup-header-digs").addEventListener("click", () => {
     window.open(browser.runtime.getURL("digs.html"), "_blank").focus()
 });
+
 document.addEventListener("click", (ev) => {
     console.log(ev.target.tagName);
     if (ev.target.tagName.toLowerCase() == "button") {
+        console.log(ev.target);
+        if (ev.target.classList.contains("save")) {
+            var digInput = ev.target.parentElement.parentElement.getElementsByClassName("digraph")[0];
+            var charInput = ev.target.parentElement.parentElement.getElementsByClassName("character")[0];
+            customDigs[digInput.value] = charInput.value;
+            ev.target.innerText = "D";
+            ev.target.classList.remove("save");
+            ev.target.classList.add("delete");
+            digInput.readOnly = true;
+            charInput.readOnly = true;
+            customTabEditted = false;
+            newDig.innerText = "Add";
+            clearDigErr();
+            storeCustom();
+        } else if (ev.target.classList.contains("delete")) {
+            var row = ev.target.parentElement.parentElement;
+            var digInput = row.getElementsByClassName("digraph")[0];
+            delete customDigs[digInput.value];
+            console.log(customDigs);
+            if (!Object.keys(customDigs).length) {
+                hideDigTabHead()
+            };
+            row.parentElement.removeChild(row);
+            storeCustom();
+
+        }
         ev.preventDefault();
         ev.stopPropagation();
     }
 });
 
-document.addEventListener("keyup", (ev) => {
-    if (ev.target.classList.contains("digraph")) {
-        var saveButton = ev.target.parentElement.parentElement.getElementsByClassName("action-button")[0];
-        var charInput = ev.target.parentElement.parentElement.getElementsByClassName("character")[0];
-        if (charInput.value.length == 1) {
-            saveButton.disabled = false;
-        }
-        if (ev.target.value in digraphs) {
-            showDigWarn(`Overriding primary digraph  '${ev.target.value}' for '${digraphs[ev.target.value]}'`);
-        } else if (stringReverse(ev.target.value) in digraphs) {
-            var rev = stringReverse(ev.target.value);
-            showDigWarn(`Overriding secondary digraph '${ev.target.value}' for '${digraphs[rev]}'`);
-        } else if (ev.target.value.length != 2) {
-            showDigError("Digraph value must be 2 chars long");
+["keyup", "focus"].forEach((i) => {
+    document.addEventListener(i, (ev) => {
+        console.log(ev.target);
+        if (ev.target.classList && ev.target.classList.contains("digraph") && !ev.target.readOnly) {
+            var saveButton = ev.target.parentElement.parentElement.getElementsByClassName("action-button")[0];
+            var charInput = ev.target.parentElement.parentElement.getElementsByClassName("character")[0];
+            if (charInput.value.length == 1) {
+                saveButton.disabled = false;
+            }
+            if (ev.target.value in digraphs) {
+                showDigWarn(`Overriding primary digraph  '${ev.target.value}' for '${digraphs[ev.target.value]}'`);
+            } else if (stringReverse(ev.target.value) in digraphs) {
+                var rev = stringReverse(ev.target.value);
+                showDigWarn(`Overriding secondary digraph '${ev.target.value}' for '${digraphs[rev]}'`);
+            } else if (ev.target.value.length != 2) {
+                //showDigError("Digraph value must be 2 chars long");
+                saveButton.disabled = true;
+                clearDigErr();
+            } else {
+                clearDigErr();
+            }
+        } else if (ev.target.classList && ev.target.classList.contains("character")) {
+            var saveButton = ev.target.parentElement.parentElement.getElementsByClassName("action-button")[0];
+            var digInput = ev.target.parentElement.parentElement.getElementsByClassName("digraph")[0];
             saveButton.disabled = true;
-        } else {
-            clearDigErr();
+            if (digInput.value.length == 2 && ev.target.value.length == 1) {
+                saveButton.disabled = false;
+            }
         }
-    } else if (ev.target.classList.contains("character")) {
-        var saveButton = ev.target.parentElement.parentElement.getElementsByClassName("action-button")[0];
-        var digInput = ev.target.parentElement.parentElement.getElementsByClassName("digraph")[0];
-        saveButton.disabled = true;
-        if (digInput.value.length == 2 && ev.target.value.length == 1) {
-            saveButton.disabled = false;
-        }
-    }
 
+    });
+});
+document.addEventListener("focusout", (ev) => {
+
+    if (ev.target.classList.contains("digraph")) {
+        clearDigErr();
+    }
 });
 browser.tabs.query({
     active: true,
@@ -305,6 +354,24 @@ browser.tabs.query({
                 shortcutModifiers = shortcutItem[1];
             }
             shortcutInput.value = buildKeyName(shortcutKey, shortcutModifiers);
+        });
+        retrieveCustom().then(customItem => {
+            if (!customItem) {
+                storeCustom();
+            } else {
+                customDigs = customItem;
+                var tabBody = document.getElementById("digtab-body");
+                for (dig in customDigs) {
+                    showDigTabHead();
+                    var character = customDigs[dig];
+                    var tabRowTemplate = document.getElementById("digtab-row");
+                    var tabRowElement = tabRowTemplate.content.cloneNode(true);
+                    tabRowElement.querySelector(".digraph").value = dig;
+                    tabRowElement.querySelector(".character").value = character;
+                    tabBody.appendChild(tabRowElement);
+
+                }
+            }
         });
 
     })
