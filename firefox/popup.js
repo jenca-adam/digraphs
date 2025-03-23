@@ -224,7 +224,9 @@ pdSwitch.addEventListener("click", (ev) => {
 document.getElementById("popup-header-digs").addEventListener("click", () => {
     window.open(browser.runtime.getURL("digs.html"), "_blank").focus()
 });
-
+document.getElementById("popup-header-help").addEventListener("click", () => {
+	window.open("https://github.com/jenca-adam/digraphs", "_blank").focus();
+});
 document.addEventListener("click", (ev) => {
     console.log(ev.target.tagName);
     if (ev.target.tagName.toLowerCase() == "button") {

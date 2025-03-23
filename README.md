@@ -15,4 +15,5 @@ Use this when this extension is causing problems on a particular site.
 ### Shortcut
 Change the shortcut that triggers the digraph.
 
-
+## License
+`digraphs` is licensed under the MIT license.
