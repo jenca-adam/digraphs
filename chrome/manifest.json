@@ -1,0 +1,35 @@
+{
+  "manifest_version": 3,
+  "name": "Digraphs for Chrome",
+  "version": "1.1",
+  "description": "Vim-style digraphs for Chrome",
+  "action": {
+    "default_icon": "icons/dig-64.png",
+    "default_popup": "popup.html",
+    "default_title": "Digraphs"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["data/digs.json"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "content_scripts": [
+    {
+      "js": [
+        "digraphs.js"
+      ],
+      "matches": [
+        "<all_urls>"
+      ],
+      "run_at": "document_start"
+    }
+  ],
+  "permissions": [
+    "activeTab",
+    "storage"
+  ]
+}

@@ -1,0 +1,89 @@
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="popup.css" />
+</head>
+
+<body id="popup">
+    <header class="popup-header">
+        <div class="popup-header-inner">
+            <span><button id="popup-header-digs" title="View the default digraphs"></button></span>
+            <span class="popup-header-title">
+                <h3>Digraphs</h3>
+            </span>
+            <span><button id="popup-header-help" title="Help"></button></span>
+        </div>
+    </header>
+    <div id="popup-content">
+        <form class="popup-form">
+            <div class="popup-form-group">
+                <div class="group-header">
+                    For this page
+                </div>
+                <div class="popup-form-item">
+                    <span>Enable</span>
+                    <label class="switch">
+                        <input id="running-switch" class="switch-box" checked type="checkbox">
+                        <span class="switch-slider"></span>
+                    </label>
+                </div>
+                <div class="popup-form-item">
+                    <span>Display digraph prompt</span>
+                    <label class="switch">
+                        <input id="pd-switch" class="switch-box" checked type="checkbox">
+                        <span class="switch-slider"></span>
+                    </label>
+                </div>
+            </div>
+            <div class="popup-form-group">
+                <div class="group-header">Global</div>
+
+                <div class="popup-form-item">
+                    <span>Modify shortcut</span>
+                    <span class="shortcut-input-container">
+                        <input type="text" id="shortcut-input"></input>
+                    </span>
+                </div>
+            </div>
+            <div class="popup-form-group">
+                <div class="group-header">Custom digraphs</div>
+                <div class="popup-form-item">
+                    <div id="table-container">
+                        <table id="digtab">
+                            <thead class="tab-header" id="digtab-header" hidden>
+                                <th class="fill">Digraph</th>
+                                <th class="shrink">Character</th>
+                                <th class="shrink icon-th"></th>
+                            </thead>
+                            <tbody id="digtab-body">
+                                <template id="digtab-row-edit">
+                                    <tr class="tab-row">
+                                        <td class="fill"><input type="text" maxlength="2" class="digraph"></td>
+                                        <td class="shrink"><input type="text" maxlength="1" class="character"></td>
+                                        <td class="shrink action"><button class="action-button save" disabled></button></td>
+                                    </tr>
+                                </template>
+                                <template id="digtab-row">
+                                    <tr class="tab-row">
+                                        <td class="fill"><input type="text" maxlength="2" class="digraph" readonly></td>
+                                        <td class="shrink"><input type="text" maxlength="1" class="character" readonly></td>
+                                        <td class="shrink action"><button class="action-button delete" ></button></td>
+                                    </tr>
+                                </template>
+                            </tbody>
+
+                        </table>
+                        <div class="row">
+                            <button id="new-dig">Add</button>
+                            <span id="dig-error"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <script src="popup.js"></script>
+</body>
+
+</html>
